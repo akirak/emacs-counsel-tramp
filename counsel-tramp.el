@@ -87,6 +87,10 @@ The hook is called with one argument that is non-nil."
 E.g.: '(\"/ssh:domain|sudo:user@localhost:/\")."
   :type 'string)
 
+(defcustom counsel-tramp-config-file "~/.ssh/config"
+  "Configuration file for the SSH client."
+  :type 'file)
+
 (defun counsel-tramp-quit ()
   "Quit counsel-tramp.
 Kill all remote buffers."
@@ -98,7 +102,7 @@ Kill all remote buffers."
   "Collect candidates for counsel-tramp from FILE."
   (let ((source (split-string
                  (with-temp-buffer
-                   (insert-file-contents (or file "~/.ssh/config"))
+                   (insert-file-contents (or file counsel-tramp-config-file))
                    (buffer-string))
                  "\n"))
         (hosts (if file '() counsel-tramp-custom-connections)))
@@ -207,7 +211,7 @@ Kill all remote buffers."
   "Open your ~/.ssh/config with counsel interface.
 You can connect your server with tramp"
   (interactive)
-  (unless (file-exists-p "~/.ssh/config")
+  (unless (file-exists-p counsel-tramp-config-file)
     (error "There is no ~/.ssh/config"))
   (when (require 'docker-tramp nil t)
     (unless (executable-find "docker")
